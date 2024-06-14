@@ -1,8 +1,31 @@
+# Terraform AWS ECS VPC Setup
+
+Este projeto demonstra como configurar uma infraestrutura AWS usando Terraform para criar um cluster ECS dentro de uma VPC personalizada. Seguiremos todas as etapas necessárias, desde a configuração do AWS CLI até a implementação de um Application Load Balancer para servir seu aplicativo.
+
+## Sumário
+1. [Sistema operacional](#sistema-operacional)
+2. [Pré-requisitos](#pré-requisitos)
+3. [Arquitetura](#arquitetura)
+4. [Terraform WorkFlow](#terraform-workflow)
+5. [Configurando AWS VPC](#configurando-aws-vpc)
+6. [Criando Subnet](#criando-subnet)
+7. [Criando Internet Gateway](#criando-internet-gateway)
+8. [Criando Nat Gateway](#criando-nat-gateway)
+9. [IAM](#iam)
+10. [Cluster ECS](#cluster-ecs)
+11. [Application Load Balancer](#application-load-balancer)
+
+
 ## Sistema operacional
 O sistema operacional usado para este tutorial é linux, caso você não use linux, considere pesquisar comandos equivalentes para o seu sistema operacional.
 
-Pré-requisitos
-- terraform
+## Pré-requisitos
+```diff
+- ##### EXPLICAR EM UM COMENTÁRIO INDIVIDUAL O QUE CADA PRÉ-REQUISITO É E O QUE O PORQUÊ DELE SER NECESSÁRIO ####
+- ##### COLOCAR VERSÕES ESPECÍFICAS DOS PRÉ-REQUISITOS, SE POSSÍVEL ####
+```
+```
+- terraform 
 - awscli
 - conta na aws
 
@@ -13,7 +36,7 @@ mkdir terraform-ecs-vpc/
 cd terraform-ecs-vpc
 ```
 
-## Arquitetura
+## Arquitetura 
 
 ![Arquitetura](./gif-arquitetura/Gravação%20de%20tela%20de%2013-06-2024%2021_40_41.gif)
 
@@ -21,7 +44,14 @@ cd terraform-ecs-vpc
 - Instalação
             nessa documentação você consegue instalar o aws cli para diferentes plataformas
             https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+```diff
+- ##### ACHO QUE SERIA LEGAL ESTABELECER UMA DISTRO LINUX ESPECÍFICA E MOSTRAR OS COMANDOS SÃO USADOS NELA PRA INSTALAR A AWS-CLI
+- ##### POR EXEMPLO "No exemplo abaixo usamos o linux mint" e você mostra os comandos em seguida.
+```
+  
 - Criando usuário
+
     - Crie um usuário na aws, com permissão de administrador
     - Crie as chaves programáticas dele para poder ter acesso ao aws cli
 
@@ -72,7 +102,9 @@ provider "aws" {
   profile = "terraform-profile"
 }
 ```
-
+```diff
+- ##### S3 e AWS sempre maiúsculo.
+```
 ## Crie um bucket s3 na aws
 https://docs.aws.amazon.com/pt_br/AmazonS3/latest/userguide/create-bucket-overview.html
 
@@ -103,6 +135,9 @@ terraform init
 
 esse comando vai baixar tudo que você configurou no seu provider e iniciar o seu backend que é onde vai ficar salvo o tfstate
 
+```diff
+- ##### Explicar brevemente o que é VPC.
+```
 ## Configurando AWS VPC
 Rode o comando abaixo para criar o arquivo que irá conter configurações de rede do nosso projeto
 ```shell
@@ -128,6 +163,9 @@ https://www.vultr.com/resources/subnet-calculator/
 
 Para o nosso caso usaremos um ip de exemplo.
 
+```diff
+- ##### subnet pública é toda subnet que possui rotas para UM Internet Gateway
+```
 ## Criando Subnet
 Para nossa arquitetura, iremos criar 4 subnets, 2 pública e 2 privada, "ah Igor mas o que caracteriza uma subnet ser publica ou privada?", subnet publica é toda subnet que possui rotas para internet gateway, ou seja, por meio do IGW meu serviço consegue se comunicar com a internet, e a subnet privada por sua vez é uma subnet isolada da internet, e não possui rotas diretas para o internet gateway, subnets privadas só possuem comunicação com a internet por meio de um NAT gateway que reside em uma subnet publica, permitindo requisições de saída da subnet mas não de entrada
 
@@ -227,6 +265,9 @@ resource "aws_nat_gateway" "nat-ecs-demo" {
 }
 ```
 
+```diff
+- ##### Explicar brevemente o papel do IAM
+```
 ## IAM
 -> Crie um arquivo iam.tf
 
@@ -234,6 +275,9 @@ resource "aws_nat_gateway" "nat-ecs-demo" {
 touch iam.tf
 ```
 
+```diff
+- ##### política
+```
 Nós iremos utilizar uma politica que ja vem por padrão em toda conta da aws para atribuir a Role de execution task
 
 ```shell
